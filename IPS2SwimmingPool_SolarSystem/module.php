@@ -14,6 +14,12 @@ class IPS2SwimmingPool_SolarSystem extends IPSModule
 		$this->RegisterPropertyInteger("ThreeWayValve_Runtime", 15); // Drei-Wege-Ventil Laufzeit
 		$this->RegisterTimer("ThreeWayValve_Runtime", 0, 'IPS2SwimmingPoolSolarSystem_StateReset($_IPS["TARGET"]);');	
 		
+		// Profile erstellen
+		$this->RegisterProfileInteger("IPS2SwimmingPool.ThreeWayValve", "Information", "", "", 0, 2, 1);
+		IPS_SetVariableProfileAssociation("IPS2SwimmingPool.ThreeWayValve", 0, "Unbekannt", "Garage", 0xFF0000);
+		IPS_SetVariableProfileAssociation("IPS2SwimmingPool.ThreeWayValve", 1, "Kurzschlußbetrieb", "Garage", 0x0000FF);
+		IPS_SetVariableProfileAssociation("IPS2SwimmingPool.ThreeWayValve", 2, "Offen", "Garage", 0x00FF00);		
+		
 		//Status-Variablen anlegen		
 		$this->RegisterVariableBoolean("Automatic", "Automatikbetrieb", "~Switch", 10);
 		$this->EnableAction("Automatic");
@@ -99,6 +105,23 @@ class IPS2SwimmingPool_SolarSystem extends IPSModule
 		
 		$this->SetTimerInterval("ThreeWayValve_Runtime", 0);
 		
+	}
+	
+	private function RegisterProfileInteger($Name, $Icon, $Prefix, $Suffix, $MinValue, $MaxValue, $StepSize)
+	{
+	        if (!IPS_VariableProfileExists($Name))
+	        {
+	            IPS_CreateVariableProfile($Name, 1);
+	        }
+	        else
+	        {
+	            $profile = IPS_GetVariableProfile($Name);
+	            if ($profile['ProfileType'] != 1)
+	                throw new Exception("Variable profile type does not match for profile " . $Name);
+	        }
+	        IPS_SetVariableProfileIcon($Name, $Icon);
+	        IPS_SetVariableProfileText($Name, $Prefix, $Suffix);
+	        IPS_SetVariableProfileValues($Name, $MinValue, $MaxValue, $StepSize);        
 	}
 }
 ?>
