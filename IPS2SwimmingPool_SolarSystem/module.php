@@ -9,8 +9,8 @@ class IPS2SwimmingPool_SolarSystem extends IPSModule
             	parent::Create();
 		$this->RegisterPropertyBoolean("Open", false);
 		$this->RegisterPropertyInteger("PumpID", 0); // Pumpe
-		$this->RegisterPropertyInteger("ThreeWayValve_ShortCircuit", 0); // Drei-Wege-Ventil im Kurzschlußbetrieb	
-		$this->RegisterPropertyInteger("ThreeWayValve_Open", 0); // Drei-Wege-Ventil offen
+		$this->RegisterPropertyInteger("ThreeWayValve_ShortCircuitID", 0); // Drei-Wege-Ventil im Kurzschlußbetrieb	
+		$this->RegisterPropertyInteger("ThreeWayValve_OpenID", 0); // Drei-Wege-Ventil offen
 		$this->RegisterPropertyInteger("ThreeWayValve_Runtime", 15); // Drei-Wege-Ventil Laufzeit
 		$this->RegisterTimer("ThreeWayValve_Runtime", 0, 'IPS2SwimmingPoolSolarSystem_StateReset($_IPS["TARGET"]);');	
 		
@@ -38,9 +38,9 @@ class IPS2SwimmingPool_SolarSystem extends IPSModule
             	$arrayElements[] = array("type" => "SelectVariable", "name" => "PumpID", "caption" => "Aktor"); 
 		$arrayElements[] = array("type" => "Label", "caption" => "_____________________________________________________________________________________________________");
             	$arrayElements[] = array("type" => "Label", "caption" => "Drei-Wege-Ventil-Aktor-ID (Boolean) für den Kurzschlußbetrieb");
-            	$arrayElements[] = array("type" => "SelectVariable", "name" => "ThreeWayValve_ShortCircuit", "caption" => "Aktor"); 
+            	$arrayElements[] = array("type" => "SelectVariable", "name" => "ThreeWayValve_ShortCircuitID", "caption" => "Aktor"); 
 		$arrayElements[] = array("type" => "Label", "caption" => "Drei-Wege-Ventil-Aktor-ID (Boolean) für den geöffneten Betrieb");
-            	$arrayElements[] = array("type" => "SelectVariable", "name" => "ThreeWayValve_Open", "caption" => "Aktor"); 
+            	$arrayElements[] = array("type" => "SelectVariable", "name" => "ThreeWayValve_OpenID", "caption" => "Aktor"); 
 		$arrayElements[] = array("type" => "Label", "caption" => "Drei-Wege-Ventil-Laufzeit");
             	$arrayElements[] = array("type" => "IntervalBox", "name" => "ThreeWayValve_Runtime", "caption" => "s");
 		
@@ -62,7 +62,29 @@ class IPS2SwimmingPool_SolarSystem extends IPSModule
 			
 		}	
 	}       
-	    
+	
+	public function RequestAction($Ident, $Value) 
+	{
+  		switch($Ident) {
+	        case "Automatic":
+			$this->SetValue($Ident, $Value);
+			If ($Value == true) {
+				$this->DisableAction("PumpState");			
+			}
+			else {
+				$this->EnableAction("PumpState");
+			}
+	            	break;
+		case "PumpState":
+			If (($this->ReadPropertyBoolean("Open") == true) AND ($this->ReadPropertyInteger("PumpID") > 9999)) {
+				RequestAction($this->ReadPropertyInteger("PumpID"), $Value);
+			}
+	            	break;
+	        default:
+	            throw new Exception("Invalid Ident");
+	    	}
+	}
+	
 	// Beginn der Funktionen
 	public function StateReset()
 	{
