@@ -56,6 +56,11 @@ class IPS2SwimmingPool_SolarSystem extends IPSModule
 	}       
 	    
 	// Beginn der Funktionen
-	
+	public function StateReset()
+	{
+		
+		$this->SetTimerInterval("ThreeWayValve_Runtime", 0);
+		
+	}
 }
 ?>
