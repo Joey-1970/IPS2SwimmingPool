@@ -8,6 +8,9 @@ class IPS2SwimmingPool_SolarSystem extends IPSModule
             	// Diese Zeile nicht löschen.
             	parent::Create();
 		$this->RegisterPropertyBoolean("Open", false);
+		$this->RegisterPropertyInteger("PumpID", 0); // Pumpe
+		$this->RegisterPropertyInteger("ThreeWayValve_ShortCircuit", 0); // Drei-Wege-Ventil im Kurzschlußbetrieb	
+		$this->RegisterPropertyInteger("ThreeWayValve_Open", 0); // Drei-Wege-Ventil offen
 	}
  	
 	public function GetConfigurationForm() 
@@ -20,6 +23,15 @@ class IPS2SwimmingPool_SolarSystem extends IPSModule
 				
 		$arrayElements = array(); 		
 		$arrayElements[] = array("name" => "Open", "type" => "CheckBox",  "caption" => "Aktiv");
+		$arrayElements[] = array("type" => "Label", "caption" => "_____________________________________________________________________________________________________");
+            	$arrayElements[] = array("type" => "Label", "caption" => "Pumpen-Aktor-ID (Boolean)");
+            	$arrayElements[] = array("type" => "SelectVariable", "name" => "PumpID", "caption" => "Aktor"); 
+		$arrayElements[] = array("type" => "Label", "caption" => "_____________________________________________________________________________________________________");
+            	$arrayElements[] = array("type" => "Label", "caption" => "Drei-Wege-Ventil-Aktor-ID (Boolean) für den Kurzschlußbetrieb");
+            	$arrayElements[] = array("type" => "SelectVariable", "name" => "ThreeWayValve_ShortCircuit", "caption" => "Aktor"); 
+		$arrayElements[] = array("type" => "Label", "caption" => "Drei-Wege-Ventil-Aktor-ID (Boolean) für den geöffneten Betrieb");
+            	$arrayElements[] = array("type" => "SelectVariable", "name" => "ThreeWayValve_Open", "caption" => "Aktor"); 
+		
 		
  		return JSON_encode(array("status" => $arrayStatus, "elements" => $arrayElements)); 		 
  	}       
