@@ -54,6 +54,14 @@ class IPS2SwimmingPool_SolarSystem extends IPSModule
             	// Diese Zeile nicht löschen
             	parent::ApplyChanges();
 		
+		If ($this->ReadPropertyBoolean("Automatic") == true) {
+			$this->DisableAction("PumpState");			
+		}
+		else {
+			$this->EnableAction("PumpState");
+		}
+		
+		
 		If ($this->ReadPropertyBoolean("Open") == true) {
 			
 		}
