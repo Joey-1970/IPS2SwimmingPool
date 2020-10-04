@@ -19,6 +19,7 @@ class IPS2SwimmingPool_SolarSystem extends IPSModule
 		$this->EnableAction("Automatic");
 		
 		$this->RegisterVariableBoolean("PumpState", "Pumpenstatus", "~Switch", 10);
+		//$this->RegisterVariableBoolean("PumpState", "Pumpenstatus", "~Switch", 10);
 	
 	}
  	
