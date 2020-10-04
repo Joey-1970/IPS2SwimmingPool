@@ -16,16 +16,16 @@ class IPS2SwimmingPool_SolarSystem extends IPSModule
 		
 		// Profile erstellen
 		$this->RegisterProfileInteger("IPS2SwimmingPool.ThreeWayValve", "Information", "", "", 0, 2, 1);
-		IPS_SetVariableProfileAssociation("IPS2SwimmingPool.ThreeWayValve", 0, "Unbekannt", "Garage", 0xFF0000);
-		IPS_SetVariableProfileAssociation("IPS2SwimmingPool.ThreeWayValve", 1, "Kurzschlußbetrieb", "Garage", 0x0000FF);
-		IPS_SetVariableProfileAssociation("IPS2SwimmingPool.ThreeWayValve", 2, "Offen", "Garage", 0x00FF00);		
+		IPS_SetVariableProfileAssociation("IPS2SwimmingPool.ThreeWayValve", 0, "Unbekannt", "Warning", 0xFF0000);
+		IPS_SetVariableProfileAssociation("IPS2SwimmingPool.ThreeWayValve", 1, "Kurzschlußbetrieb", "Repeat", 0x0000FF);
+		IPS_SetVariableProfileAssociation("IPS2SwimmingPool.ThreeWayValve", 2, "Offen", "Return", 0x00FF00);		
 		
 		//Status-Variablen anlegen		
 		$this->RegisterVariableBoolean("Automatic", "Automatikbetrieb", "~Switch", 10);
 		$this->EnableAction("Automatic");
 		
-		$this->RegisterVariableBoolean("PumpState", "Pumpenstatus", "~Switch", 10);
-		//$this->RegisterVariableBoolean("PumpState", "Pumpenstatus", "~Switch", 10);
+		$this->RegisterVariableBoolean("PumpState", "Pumpenstatus", "~Switch", 20);
+		$this->RegisterVariableInteger("ThreeWayValve", "Drei-Wege-Ventil", "IPS2SwimmingPool.ThreeWayValve", 30);
 	
 	}
  	
@@ -61,10 +61,12 @@ class IPS2SwimmingPool_SolarSystem extends IPSModule
             	parent::ApplyChanges();
 		
 		If ($this->ReadPropertyBoolean("Automatic") == true) {
-			$this->DisableAction("PumpState");			
+			$this->DisableAction("PumpState");
+			$this->DisableAction("ThreeWayValve");
 		}
 		else {
 			$this->EnableAction("PumpState");
+			$this->EnableAction("ThreeWayValve");		
 		}
 		
 		
@@ -83,15 +85,29 @@ class IPS2SwimmingPool_SolarSystem extends IPSModule
 	        case "Automatic":
 			$this->SetValue($Ident, $Value);
 			If ($Value == true) {
-				$this->DisableAction("PumpState");			
-			}
+				$this->DisableAction("PumpState");
+				$this->DisableAction("ThreeWayValve");			}
 			else {
 				$this->EnableAction("PumpState");
+				$this->EnableAction("ThreeWayValve");
 			}
 	            	break;
 		case "PumpState":
 			If (($this->ReadPropertyBoolean("Open") == true) AND ($this->ReadPropertyInteger("PumpID") > 9999)) {
 				RequestAction($this->ReadPropertyInteger("PumpID"), $Value);
+			}
+	            	break;
+		case "ThreeWayValve":
+			If (($this->ReadPropertyBoolean("Open") == true) AND ($this->ReadPropertyInteger("ThreeWayValve_ShortCircuitID") > 9999) AND ($this->ReadPropertyInteger("ThreeWayValve_OpenID") > 9999)) {
+				If ($Value == 1) {
+					RequestAction($this->ReadPropertyInteger("ThreeWayValve_OpenID"), false);
+					RequestAction($this->ReadPropertyInteger("ThreeWayValve_ShortCircuitID"), true);
+				}
+				elseif ($Value == 2) {
+					RequestAction($this->ReadPropertyInteger("ThreeWayValve_ShortCircuitID"), false);
+					RequestAction($this->ReadPropertyInteger("ThreeWayValve_OpenID"), true);
+				}
+				$this->SetTimerInterval("ThreeWayValve_Runtime", $this->ReadPropertyInteger("ThreeWayValve_Runtime") * 1000);
 			}
 	            	break;
 	        default:
@@ -102,8 +118,11 @@ class IPS2SwimmingPool_SolarSystem extends IPSModule
 	// Beginn der Funktionen
 	public function StateReset()
 	{
-		
-		$this->SetTimerInterval("ThreeWayValve_Runtime", 0);
+		If (($this->ReadPropertyBoolean("Open") == true) AND ($this->ReadPropertyInteger("ThreeWayValve_ShortCircuitID") > 9999) AND ($this->ReadPropertyInteger("ThreeWayValve_OpenID") > 9999)) {
+			RequestAction($this->ReadPropertyInteger("ThreeWayValve_ShortCircuitID"), false);
+			RequestAction($this->ReadPropertyInteger("ThreeWayValve_OpenID"), false);
+			$this->SetTimerInterval("ThreeWayValve_Runtime", 0);
+		}
 		
 	}
 	
