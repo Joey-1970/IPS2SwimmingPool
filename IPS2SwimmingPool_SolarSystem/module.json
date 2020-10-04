@@ -1,0 +1,14 @@
+{
+  "id": "{CE90462A-9C1A-AEB0-C1AF-3C4480A6B7E6}",
+  "name": "IPS2SwimmingPool_SolarSystem",
+  "type": 3,
+  "vendor": "JP-IPS-Modules",
+  "aliases":
+  [
+    "IPS2SwimmingPool_SolarSystem"
+  ],
+  "parentRequirements": [],
+  "childRequirements": [],
+  "implemented": [],
+  "prefix": "IPS2SwimmingPoolSolarSystem"
+}
