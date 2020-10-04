@@ -13,6 +13,13 @@ class IPS2SwimmingPool_SolarSystem extends IPSModule
 		$this->RegisterPropertyInteger("ThreeWayValve_Open", 0); // Drei-Wege-Ventil offen
 		$this->RegisterPropertyInteger("ThreeWayValve_Runtime", 15); // Drei-Wege-Ventil Laufzeit
 		$this->RegisterTimer("ThreeWayValve_Runtime", 0, 'IPS2SwimmingPoolSolarSystem_StateReset($_IPS["TARGET"]);');	
+		
+		//Status-Variablen anlegen		
+		$this->RegisterVariableBoolean("Automatic", "Automatikbetrieb", "~Switch", 10);
+		$this->EnableAction("Automatic");
+		
+		$this->RegisterVariableBoolean("PumpState", "Pumpenstatus", "~Switch", 10);
+	
 	}
  	
 	public function GetConfigurationForm() 
