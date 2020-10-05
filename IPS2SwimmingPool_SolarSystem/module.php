@@ -13,12 +13,12 @@ class IPS2SwimmingPool_SolarSystem extends IPSModule
 		$this->RegisterPropertyInteger("ThreeWayValve_OpenID", 0); // Drei-Wege-Ventil offen
 		$this->RegisterPropertyInteger("ThreeWayValve_Runtime", 15); // Drei-Wege-Ventil Laufzeit
 		//$this->RegisterTimer("ThreeWayValve_Runtime", 0, 'IPS2SwimmingPoolSolarSystem_ThreeWayValveStateReset($_IPS["TARGET"]);');
-		$this->RegisterTimer("ThreeWayValve_Runtime", 0,'IPS_RequestAction($_IPS["TARGET"], "ThreeWayValveStateReset", 0);');       
+		$this->RegisterTimer("ThreeWayValve_Runtime", 0,'IPS_RequestAction($_IPS["TARGET"], "ThreeWayValveStateReset");');       
 		$this->RegisterPropertyInteger("Temperature_FlowID", 0); // Vorlauf-Temperatursensor
 		$this->RegisterPropertyInteger("Temperature_CollectorAreaID", 0); // Kollektorflächen-Temperatursensor
 		$this->RegisterPropertyInteger("Temperature_ShortCircuitID", 0); // Kurzschlusskreis-Temperatursensor
 		$this->RegisterPropertyInteger("Temperature_ReturnID", 0); // Rücklauf-Temperatursensor
-		$this->RegisterTimer("SolarSystemControl", 0,'IPS_RequestAction($_IPS["TARGET"], "SolarSystemControl", 0);');       
+		$this->RegisterTimer("SolarSystemControl", 0,'IPS_RequestAction($_IPS["TARGET"], "SolarSystemControl");');       
 		
 		// Profile erstellen
 		$this->RegisterProfileInteger("IPS2SwimmingPool.ThreeWayValve", "Information", "", "", 0, 2, 1);
