@@ -12,7 +12,7 @@ class IPS2SwimmingPool_SolarSystem extends IPSModule
 		$this->RegisterPropertyInteger("ThreeWayValve_ShortCircuitID", 0); // Drei-Wege-Ventil im Kurzschlußbetrieb	
 		$this->RegisterPropertyInteger("ThreeWayValve_OpenID", 0); // Drei-Wege-Ventil offen
 		$this->RegisterPropertyInteger("ThreeWayValve_Runtime", 15); // Drei-Wege-Ventil Laufzeit
-		$this->RegisterTimer("ThreeWayValve_Runtime", 0, 'IPS2SwimmingPoolSolarSystem_StateReset($_IPS["TARGET"]);');	
+		$this->RegisterTimer("ThreeWayValve_Runtime", 0, 'IPS2SwimmingPoolSolarSystem_ThreeWayValveStateReset($_IPS["TARGET"]);');	
 		
 		// Profile erstellen
 		$this->RegisterProfileInteger("IPS2SwimmingPool.ThreeWayValve", "Information", "", "", 0, 2, 1);
@@ -65,8 +65,12 @@ class IPS2SwimmingPool_SolarSystem extends IPSModule
 			$this->DisableAction("ThreeWayValve");
 		}
 		else {
-			$this->EnableAction("PumpState");
-			$this->EnableAction("ThreeWayValve");		
+			If ($this->ReadPropertyInteger("PumpID") > 9999) {
+				$this->EnableAction("PumpState");
+			}
+			If (($this->ReadPropertyInteger("ThreeWayValve_ShortCircuitID") > 9999) AND ($this->ReadPropertyInteger("ThreeWayValve_OpenID") > 9999)) {
+				$this->EnableAction("ThreeWayValve");
+			}
 		}
 		
 		
@@ -95,6 +99,7 @@ class IPS2SwimmingPool_SolarSystem extends IPSModule
 		case "PumpState":
 			If (($this->ReadPropertyBoolean("Open") == true) AND ($this->ReadPropertyInteger("PumpID") > 9999)) {
 				RequestAction($this->ReadPropertyInteger("PumpID"), $Value);
+				$this->SetValue($Ident, $Value);
 			}
 	            	break;
 		case "ThreeWayValve":
@@ -108,6 +113,7 @@ class IPS2SwimmingPool_SolarSystem extends IPSModule
 					RequestAction($this->ReadPropertyInteger("ThreeWayValve_OpenID"), true);
 				}
 				$this->SetTimerInterval("ThreeWayValve_Runtime", $this->ReadPropertyInteger("ThreeWayValve_Runtime") * 1000);
+				$this->SetValue($Ident, $Value);
 			}
 	            	break;
 	        default:
@@ -116,7 +122,7 @@ class IPS2SwimmingPool_SolarSystem extends IPSModule
 	}
 	
 	// Beginn der Funktionen
-	public function StateReset()
+	public function ThreeWayValveStateReset()
 	{
 		If (($this->ReadPropertyBoolean("Open") == true) AND ($this->ReadPropertyInteger("ThreeWayValve_ShortCircuitID") > 9999) AND ($this->ReadPropertyInteger("ThreeWayValve_OpenID") > 9999)) {
 			RequestAction($this->ReadPropertyInteger("ThreeWayValve_ShortCircuitID"), false);
