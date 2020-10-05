@@ -63,7 +63,11 @@ class IPS2SwimmingPool_SolarSystem extends IPSModule
 		$arrayElements[] = array("type" => "Label", "caption" => "Rücklauf-Temperatur-ID (Float)");
             	$arrayElements[] = array("type" => "SelectVariable", "name" => "Temperature_ReturnID", "caption" => "Sensor"); 
 		
- 		return JSON_encode(array("status" => $arrayStatus, "elements" => $arrayElements)); 		 
+ 		$arrayActions = array(); 
+		$arrayActions[] = array("type" => "Label", "label" => "Test Center"); 
+		$arrayActions[] = array("type" => "TestCenter", "name" => "TestCenter");
+		
+ 		return JSON_encode(array("status" => $arrayStatus, "elements" => $arrayElements, "actions" => $arrayActions)); 	
  	}       
 	   
         // Überschreibt die intere IPS_ApplyChanges($id) Funktion
