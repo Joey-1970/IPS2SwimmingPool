@@ -13,6 +13,10 @@ class IPS2SwimmingPool_SolarSystem extends IPSModule
 		$this->RegisterPropertyInteger("ThreeWayValve_OpenID", 0); // Drei-Wege-Ventil offen
 		$this->RegisterPropertyInteger("ThreeWayValve_Runtime", 15); // Drei-Wege-Ventil Laufzeit
 		$this->RegisterTimer("ThreeWayValve_Runtime", 0, 'IPS2SwimmingPoolSolarSystem_ThreeWayValveStateReset($_IPS["TARGET"]);');	
+		$this->RegisterPropertyInteger("Temperature_FlowID", 0); // Vorlauf-Temperatursensor
+		$this->RegisterPropertyInteger("Temperature_CollectorAreaID", 0); // Kollektorflächen-Temperatursensor
+		$this->RegisterPropertyInteger("Temperature_ShortCircuitID", 0); // Kurzschlusskreis-Temperatursensor
+		$this->RegisterPropertyInteger("Temperature_ReturnID", 0); // Rücklauf-Temperatursensor
 		
 		// Profile erstellen
 		$this->RegisterProfileInteger("IPS2SwimmingPool.ThreeWayValve", "Information", "", "", 0, 2, 1);
@@ -49,7 +53,15 @@ class IPS2SwimmingPool_SolarSystem extends IPSModule
             	$arrayElements[] = array("type" => "SelectVariable", "name" => "ThreeWayValve_OpenID", "caption" => "Aktor"); 
 		$arrayElements[] = array("type" => "Label", "caption" => "Drei-Wege-Ventil-Laufzeit");
             	$arrayElements[] = array("type" => "IntervalBox", "name" => "ThreeWayValve_Runtime", "caption" => "s");
-		
+		$arrayElements[] = array("type" => "Label", "caption" => "_____________________________________________________________________________________________________");
+		$arrayElements[] = array("type" => "Label", "caption" => "Vorlauf-Temperatur-ID (Float)");
+            	$arrayElements[] = array("type" => "SelectVariable", "name" => "Temperature_FlowID", "caption" => "Sensor"); 
+		$arrayElements[] = array("type" => "Label", "caption" => "Kollektorflächen-Temperatur-ID (Float)");
+            	$arrayElements[] = array("type" => "SelectVariable", "name" => "Temperature_CollectorAreaID", "caption" => "Sensor"); 
+		$arrayElements[] = array("type" => "Label", "caption" => "Kurzschlusskreis-Temperatur-ID (Float)");
+            	$arrayElements[] = array("type" => "SelectVariable", "name" => "Temperature_ShortCircuitID", "caption" => "Sensor"); 
+		$arrayElements[] = array("type" => "Label", "caption" => "Rücklauf-Temperatur-ID (Float)");
+            	$arrayElements[] = array("type" => "SelectVariable", "name" => "Temperature_ReturnID", "caption" => "Sensor"); 
 		
  		return JSON_encode(array("status" => $arrayStatus, "elements" => $arrayElements)); 		 
  	}       
