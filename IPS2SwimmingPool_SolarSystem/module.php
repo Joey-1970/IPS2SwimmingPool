@@ -12,11 +12,13 @@ class IPS2SwimmingPool_SolarSystem extends IPSModule
 		$this->RegisterPropertyInteger("ThreeWayValve_ShortCircuitID", 0); // Drei-Wege-Ventil im Kurzschlußbetrieb	
 		$this->RegisterPropertyInteger("ThreeWayValve_OpenID", 0); // Drei-Wege-Ventil offen
 		$this->RegisterPropertyInteger("ThreeWayValve_Runtime", 15); // Drei-Wege-Ventil Laufzeit
-		$this->RegisterTimer("ThreeWayValve_Runtime", 0, 'IPS2SwimmingPoolSolarSystem_ThreeWayValveStateReset($_IPS["TARGET"]);');	
+		//$this->RegisterTimer("ThreeWayValve_Runtime", 0, 'IPS2SwimmingPoolSolarSystem_ThreeWayValveStateReset($_IPS["TARGET"]);');
+		$this->RegisterTimer("ThreeWayValve_Runtime", 0,'IPS_RequestAction($_IPS["TARGET"], "ThreeWayValveStateReset", 0);');       
 		$this->RegisterPropertyInteger("Temperature_FlowID", 0); // Vorlauf-Temperatursensor
 		$this->RegisterPropertyInteger("Temperature_CollectorAreaID", 0); // Kollektorflächen-Temperatursensor
 		$this->RegisterPropertyInteger("Temperature_ShortCircuitID", 0); // Kurzschlusskreis-Temperatursensor
 		$this->RegisterPropertyInteger("Temperature_ReturnID", 0); // Rücklauf-Temperatursensor
+		$this->RegisterTimer("ThreeWayValve_Runtime", 0,'IPS_RequestAction($_IPS["TARGET"], "SolarSystemControl", 0);');       
 		
 		// Profile erstellen
 		$this->RegisterProfileInteger("IPS2SwimmingPool.ThreeWayValve", "Information", "", "", 0, 2, 1);
@@ -116,43 +118,49 @@ class IPS2SwimmingPool_SolarSystem extends IPSModule
 	public function RequestAction($Ident, $Value) 
 	{
   		switch($Ident) {
-	        case "Automatic":
-			$this->SetValue($Ident, $Value);
-			If ($Value == true) {
-				$this->DisableAction("PumpState");
-				$this->DisableAction("ThreeWayValve");			}
-			else {
-				$this->EnableAction("PumpState");
-				$this->EnableAction("ThreeWayValve");
-			}
-	            	break;
-		case "PumpState":
-			If (($this->ReadPropertyBoolean("Open") == true) AND ($this->ReadPropertyInteger("PumpID") > 9999)) {
-				RequestAction($this->ReadPropertyInteger("PumpID"), $Value);
+			case "ThreeWayValveStateReset":
+				$this->ThreeWayValveStateReset();
+				break;
+			case "SolarSystemControl":
+				$this->SolarSystemControl();
+				break;
+			case "Automatic":
 				$this->SetValue($Ident, $Value);
-			}
-	            	break;
-		case "ThreeWayValve":
+				If ($Value == true) {
+					$this->DisableAction("PumpState");
+					$this->DisableAction("ThreeWayValve");			}
+				else {
+					$this->EnableAction("PumpState");
+					$this->EnableAction("ThreeWayValve");
+				}
+				break;
+			case "PumpState":
+				If (($this->ReadPropertyBoolean("Open") == true) AND ($this->ReadPropertyInteger("PumpID") > 9999)) {
+					RequestAction($this->ReadPropertyInteger("PumpID"), $Value);
+					$this->SetValue($Ident, $Value);
+				}
+				break;
+			case "ThreeWayValve":
 			If (($this->ReadPropertyBoolean("Open") == true) AND ($this->ReadPropertyInteger("ThreeWayValve_ShortCircuitID") > 9999) AND ($this->ReadPropertyInteger("ThreeWayValve_OpenID") > 9999)) {
-				If ($Value == 1) {
-					RequestAction($this->ReadPropertyInteger("ThreeWayValve_OpenID"), false);
-					RequestAction($this->ReadPropertyInteger("ThreeWayValve_ShortCircuitID"), true);
+					If ($Value == 1) {
+						RequestAction($this->ReadPropertyInteger("ThreeWayValve_OpenID"), false);
+						RequestAction($this->ReadPropertyInteger("ThreeWayValve_ShortCircuitID"), true);
+					}
+					elseif ($Value == 2) {
+						RequestAction($this->ReadPropertyInteger("ThreeWayValve_ShortCircuitID"), false);
+						RequestAction($this->ReadPropertyInteger("ThreeWayValve_OpenID"), true);
+					}
+					$this->SetTimerInterval("ThreeWayValve_Runtime", $this->ReadPropertyInteger("ThreeWayValve_Runtime") * 1000);
+					$this->SetValue($Ident, $Value);
 				}
-				elseif ($Value == 2) {
-					RequestAction($this->ReadPropertyInteger("ThreeWayValve_ShortCircuitID"), false);
-					RequestAction($this->ReadPropertyInteger("ThreeWayValve_OpenID"), true);
-				}
-				$this->SetTimerInterval("ThreeWayValve_Runtime", $this->ReadPropertyInteger("ThreeWayValve_Runtime") * 1000);
-				$this->SetValue($Ident, $Value);
-			}
-	            	break;
+				break;
 	        default:
 	            throw new Exception("Invalid Ident");
 	    	}
 	}
 	
 	// Beginn der Funktionen
-	public function SolarSystemControl()
+	private function SolarSystemControl()
 	{
 		If ($this->ReadPropertyBoolean("Open") == true) {
 			// wenn die Kollektorflächen-Temperatur > der Vorlauftemperatur ist, soll die Pumpe laufen. Hysterese??
@@ -164,7 +172,7 @@ class IPS2SwimmingPool_SolarSystem extends IPSModule
 	}
 	
 	
-	public function ThreeWayValveStateReset()
+	private function ThreeWayValveStateReset()
 	{
 		If (($this->ReadPropertyBoolean("Open") == true) AND ($this->ReadPropertyInteger("ThreeWayValve_ShortCircuitID") > 9999) AND ($this->ReadPropertyInteger("ThreeWayValve_OpenID") > 9999)) {
 			RequestAction($this->ReadPropertyInteger("ThreeWayValve_ShortCircuitID"), false);
