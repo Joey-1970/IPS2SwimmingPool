@@ -39,7 +39,7 @@ class IPS2SwimmingPool_SolarSystem extends IPSModule
 		$arrayStatus[] = array("code" => 101, "icon" => "inactive", "caption" => "Instanz wird erstellt"); 
 		$arrayStatus[] = array("code" => 102, "icon" => "active", "caption" => "Instanz ist aktiv");
 		$arrayStatus[] = array("code" => 104, "icon" => "inactive", "caption" => "Instanz ist inaktiv");
-		$arrayStatus[] = array("code" => 202, "icon" => "error", "caption" => "Kommunikationfehler!");
+		$arrayStatus[] = array("code" => 202, "icon" => "error", "caption" => "Fehlende Sensorwerte/Aktoren!");
 				
 		$arrayElements = array(); 		
 		$arrayElements[] = array("name" => "Open", "type" => "CheckBox",  "caption" => "Aktiv");
@@ -91,7 +91,21 @@ class IPS2SwimmingPool_SolarSystem extends IPSModule
 		
 		
 		If ($this->ReadPropertyBoolean("Open") == true) {
-			
+			If (($this->ReadPropertyInteger("ThreeWayValve_ShortCircuitID") > 9999) 
+			    AND ($this->ReadPropertyInteger("ThreeWayValve_OpenID") > 9999)
+			    AND ($this->ReadPropertyInteger("PumpID") > 9999)
+			    AND ($this->ReadPropertyInteger("Temperature_FlowID") > 9999)
+			    AND ($this->ReadPropertyInteger("Temperature_CollectorAreaID") > 9999)
+			    AND ($this->ReadPropertyInteger("Temperature_ShortCircuitID") > 9999)
+			    AND ($this->ReadPropertyInteger("Temperature_ReturnID") > 9999) ) 
+				{
+					// Startbedingungen erfüllt
+					$this->SetStatus(102);
+					
+				}
+			else {
+				$this->SetStatus(202);
+			}
 		}
 		else {
 			$this->SetStatus(104);
