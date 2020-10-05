@@ -18,7 +18,7 @@ class IPS2SwimmingPool_SolarSystem extends IPSModule
 		$this->RegisterPropertyInteger("Temperature_CollectorAreaID", 0); // Kollektorflächen-Temperatursensor
 		$this->RegisterPropertyInteger("Temperature_ShortCircuitID", 0); // Kurzschlusskreis-Temperatursensor
 		$this->RegisterPropertyInteger("Temperature_ReturnID", 0); // Rücklauf-Temperatursensor
-		$this->RegisterTimer("ThreeWayValve_Runtime", 0,'IPS_RequestAction($_IPS["TARGET"], "SolarSystemControl", 0);');       
+		$this->RegisterTimer("SolarSystemControl", 0,'IPS_RequestAction($_IPS["TARGET"], "SolarSystemControl", 0);');       
 		
 		// Profile erstellen
 		$this->RegisterProfileInteger("IPS2SwimmingPool.ThreeWayValve", "Information", "", "", 0, 2, 1);
@@ -102,16 +102,21 @@ class IPS2SwimmingPool_SolarSystem extends IPSModule
 			    AND ($this->ReadPropertyInteger("Temperature_ReturnID") > 9999) ) 
 				{
 					// Startbedingungen erfüllt
+					$this->SendDebug("ApplyChanges", "Startbedingungen erfuellt", 0);
 					$this->SetStatus(102);
+					$this->SetTimerInterval("SolarSystemControl", 30 * 1000);
 					
 				}
 			else {
+				Echo "Startbedingungen nicht erfuellt (fehlende Sensoren/Aktoren)!";
+				$this->SendDebug("ApplyChanges", "Startbedingungen nicht erfuellt!", 0);
 				$this->SetStatus(202);
+				$this->SetTimerInterval("SolarSystemControl", 0);
 			}
 		}
 		else {
 			$this->SetStatus(104);
-			
+			$this->SetTimerInterval("SolarSystemControl", 0);
 		}	
 	}       
 	
@@ -141,7 +146,7 @@ class IPS2SwimmingPool_SolarSystem extends IPSModule
 				}
 				break;
 			case "ThreeWayValve":
-			If (($this->ReadPropertyBoolean("Open") == true) AND ($this->ReadPropertyInteger("ThreeWayValve_ShortCircuitID") > 9999) AND ($this->ReadPropertyInteger("ThreeWayValve_OpenID") > 9999)) {
+				If (($this->ReadPropertyBoolean("Open") == true) AND ($this->ReadPropertyInteger("ThreeWayValve_ShortCircuitID") > 9999) AND ($this->ReadPropertyInteger("ThreeWayValve_OpenID") > 9999)) {
 					If ($Value == 1) {
 						RequestAction($this->ReadPropertyInteger("ThreeWayValve_OpenID"), false);
 						RequestAction($this->ReadPropertyInteger("ThreeWayValve_ShortCircuitID"), true);
@@ -163,6 +168,7 @@ class IPS2SwimmingPool_SolarSystem extends IPSModule
 	private function SolarSystemControl()
 	{
 		If ($this->ReadPropertyBoolean("Open") == true) {
+			$this->SendDebug("SolarSystemControl", "Ausfuehrung", 0);
 			// wenn die Kollektorflächen-Temperatur > der Vorlauftemperatur ist, soll die Pumpe laufen. Hysterese??
 			$Temperature_CollectorArea = $this->GetValue($this->ReadPropertyInteger("Temperature_CollectorAreaID"));
 			$Temperature_Flow = $this->GetValue($this->ReadPropertyInteger("Temperature_FlowID"));
@@ -175,6 +181,7 @@ class IPS2SwimmingPool_SolarSystem extends IPSModule
 	private function ThreeWayValveStateReset()
 	{
 		If (($this->ReadPropertyBoolean("Open") == true) AND ($this->ReadPropertyInteger("ThreeWayValve_ShortCircuitID") > 9999) AND ($this->ReadPropertyInteger("ThreeWayValve_OpenID") > 9999)) {
+			$this->SendDebug("ThreeWayValveStateReset", "Spannung am Drei-Wege-Ventil ausgeschaltet", 0);
 			RequestAction($this->ReadPropertyInteger("ThreeWayValve_ShortCircuitID"), false);
 			RequestAction($this->ReadPropertyInteger("ThreeWayValve_OpenID"), false);
 			$this->SetTimerInterval("ThreeWayValve_Runtime", 0);
