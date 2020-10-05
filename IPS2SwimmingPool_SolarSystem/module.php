@@ -100,13 +100,16 @@ class IPS2SwimmingPool_SolarSystem extends IPSModule
 			    AND ($this->ReadPropertyInteger("Temperature_CollectorAreaID") > 9999)
 			    AND ($this->ReadPropertyInteger("Temperature_ShortCircuitID") > 9999)
 			    AND ($this->ReadPropertyInteger("Temperature_ReturnID") > 9999) ) 
-				{
-					// Startbedingungen erfüllt
-					$this->SendDebug("ApplyChanges", "Startbedingungen erfuellt", 0);
-					$this->SetStatus(102);
-					$this->SetTimerInterval("SolarSystemControl", 30 * 1000);
-					
-				}
+			{
+				// Startbedingungen erfüllt
+				$this->SendDebug("ApplyChanges", "Startbedingungen erfuellt", 0);
+				$this->SetStatus(102);
+				$this->SetTimerInterval("SolarSystemControl", 30 * 1000);
+				// Registrierung für Änderung an den Variablen
+				$this->RegisterMessage($this->ReadPropertyInteger("ThreeWayValve_ShortCircuitID"), 10603);
+				$this->RegisterMessage($this->ReadPropertyInteger("ThreeWayValve_OpenID"), 10603);
+				$this->RegisterMessage($this->ReadPropertyInteger("PumpID"), 10603);
+			}
 			else {
 				Echo "Startbedingungen nicht erfuellt (fehlende Sensoren/Aktoren)!";
 				$this->SendDebug("ApplyChanges", "Startbedingungen nicht erfuellt!", 0);
@@ -142,7 +145,6 @@ class IPS2SwimmingPool_SolarSystem extends IPSModule
 			case "PumpState":
 				If (($this->ReadPropertyBoolean("Open") == true) AND ($this->ReadPropertyInteger("PumpID") > 9999)) {
 					RequestAction($this->ReadPropertyInteger("PumpID"), $Value);
-					$this->SetValue($Ident, $Value);
 				}
 				break;
 			case "ThreeWayValve":
@@ -156,13 +158,36 @@ class IPS2SwimmingPool_SolarSystem extends IPSModule
 						RequestAction($this->ReadPropertyInteger("ThreeWayValve_OpenID"), true);
 					}
 					$this->SetTimerInterval("ThreeWayValve_Runtime", $this->ReadPropertyInteger("ThreeWayValve_Runtime") * 1000);
-					$this->SetValue($Ident, $Value);
+					//$this->SetValue($Ident, $Value);
 				}
 				break;
 	        default:
 	            throw new Exception("Invalid Ident");
 	    	}
 	}
+	
+	public function MessageSink($TimeStamp, $SenderID, $Message, $Data)
+    	{
+		switch ($Message) {
+			case 10603:
+				// Änderung des Pumpen-Status
+				If ($SenderID == $this->ReadPropertyInteger("PumpID")) {
+					$this->SetValue("PumpState", $this->GetValue("PumpID"));
+				}
+				// Änderung des Drei-Wege-Ventil-Status
+				elseif ($SenderID == $this->ReadPropertyInteger("ThreeWayValve_ShortCircuitID")) {
+					If ($this->GetValue("ThreeWayValve_ShortCircuitID") == true) {
+						$this->SetValue("ThreeWayValve", 1);
+					}
+				}
+				elseif ($SenderID == $this->ReadPropertyInteger("ThreeWayValve_OpenID")) {
+					If ($this->GetValue("ThreeWayValve_OpenID") == true) {
+						$this->SetValue("ThreeWayValve", 2);
+					}
+				}
+				break;
+		}
+    	}
 	
 	// Beginn der Funktionen
 	private function SolarSystemControl()
