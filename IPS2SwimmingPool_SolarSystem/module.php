@@ -109,6 +109,8 @@ class IPS2SwimmingPool_SolarSystem extends IPSModule
 				$this->RegisterMessage($this->ReadPropertyInteger("ThreeWayValve_ShortCircuitID"), 10603);
 				$this->RegisterMessage($this->ReadPropertyInteger("ThreeWayValve_OpenID"), 10603);
 				$this->RegisterMessage($this->ReadPropertyInteger("PumpID"), 10603);
+				// Anlage in den Standardzustand versetzen
+				$this->DefalutState();
 			}
 			else {
 				Echo "Startbedingungen nicht erfuellt (fehlende Sensoren/Aktoren)!";
@@ -202,6 +204,17 @@ class IPS2SwimmingPool_SolarSystem extends IPSModule
 		}
 	}
 	
+	private function DefaultState()
+	{
+		If ($this->ReadPropertyBoolean("Open") == true) {
+			$this->SendDebug("DefaultState", "Ausfuehrung", 0);
+			// Drei-Wege-Ventil in Kurzschlußbetrieb
+			RequestAction($this->ReadPropertyInteger("ThreeWayValve_OpenID"), false);
+			RequestAction($this->ReadPropertyInteger("ThreeWayValve_ShortCircuitID"), true);
+			// Pumpe aus
+			RequestAction($this->ReadPropertyInteger("PumpID"), false);
+		}
+	}
 	
 	private function ThreeWayValveStateReset()
 	{
