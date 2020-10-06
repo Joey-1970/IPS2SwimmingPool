@@ -213,7 +213,13 @@ class IPS2SwimmingPool_SolarSystem extends IPSModule
 				// Pumpe einschalten
 				RequestAction($this->ReadPropertyInteger("PumpID"), true);
 			}
-			
+			elseif (($Temperature_CollectorArea <= $Temperature_Flow) AND ($PumpState == true)) {
+				// Drei-Wege-Ventil in Kurzschlußbetrieb
+				RequestAction($this->ReadPropertyInteger("ThreeWayValve_OpenID"), false);
+				RequestAction($this->ReadPropertyInteger("ThreeWayValve_ShortCircuitID"), true);
+				// Pumpe einschalten
+				RequestAction($this->ReadPropertyInteger("PumpID"), false);
+			}
 			
 			
 		}
