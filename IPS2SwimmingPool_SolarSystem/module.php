@@ -199,11 +199,12 @@ class IPS2SwimmingPool_SolarSystem extends IPSModule
 	{
 		If ($this->ReadPropertyBoolean("Open") == true) {
 			$this->SendDebug("SolarSystemControl", "Ausfuehrung", 0);
-			// wenn die Kollektorflächen-Temperatur > der Vorlauftemperatur ist, soll die Pumpe laufen. Hysterese??
-			$Temperature_CollectorArea = $this->GetValue($this->ReadPropertyInteger("Temperature_CollectorAreaID"));
-			$Temperature_Flow = $this->GetValue($this->ReadPropertyInteger("Temperature_FlowID"));
 			$PumpState = $this->GetValue("PumpState");
 			$PumpHysteresis = $this->ReadPropertyFloat("PumpHysteresis");
+			
+			$Temperature_CollectorArea = $this->GetValue($this->ReadPropertyInteger("Temperature_CollectorAreaID"));
+			$Temperature_Flow = $this->GetValue($this->ReadPropertyInteger("Temperature_FlowID"));
+			$Temperature_ShortCircuit = $this->GetValue($this->ReadPropertyInteger("Temperature_ShortCircuitID"));
 			
 			// Pumpenstatus
 			If (($Temperature_CollectorArea > ($Temperature_Flow + $PumpHysteresis)) AND ($PumpState == false)) {
@@ -221,7 +222,10 @@ class IPS2SwimmingPool_SolarSystem extends IPSModule
 				RequestAction($this->ReadPropertyInteger("PumpID"), false);
 			}
 			
-			
+			// Drei-Wege-Ventil
+			If (($Temperature_ShortCircuit > $Temperature_Flow) AND ($PumpState == true)) {
+				
+			}
 		}
 	}
 	
