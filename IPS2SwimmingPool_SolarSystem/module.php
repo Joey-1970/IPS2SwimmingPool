@@ -9,6 +9,7 @@ class IPS2SwimmingPool_SolarSystem extends IPSModule
             	parent::Create();
 		$this->RegisterPropertyBoolean("Open", false);
 		$this->RegisterPropertyInteger("PumpID", 0); // Pumpe
+		$this->RegisterPropertyFloat("PumpHysteresis", 3); // Pumpe-Schalt-Hysterese
 		$this->RegisterPropertyInteger("ThreeWayValve_ShortCircuitID", 0); // Drei-Wege-Ventil im Kurzschlußbetrieb	
 		$this->RegisterPropertyInteger("ThreeWayValve_OpenID", 0); // Drei-Wege-Ventil offen
 		$this->RegisterPropertyInteger("ThreeWayValve_Runtime", 15); // Drei-Wege-Ventil Laufzeit
@@ -48,6 +49,8 @@ class IPS2SwimmingPool_SolarSystem extends IPSModule
 		$arrayElements[] = array("type" => "Label", "caption" => "_____________________________________________________________________________________________________");
             	$arrayElements[] = array("type" => "Label", "caption" => "Pumpen-Aktor-ID (Boolean)");
             	$arrayElements[] = array("type" => "SelectVariable", "name" => "PumpID", "caption" => "Aktor"); 
+		$arrayElements[] = array("type" => "Label", "caption" => "Pumpen-Schalt-Hysterenwert (Minimum 0.5 K)");
+		$arrayElements[] = array("type" => "NumberSpinner", "name" => "PumpHysteresis",  "caption" => "Kelvin", "digits" => 1, "minimum" => 0.5, "suffix" => "°C");
 		$arrayElements[] = array("type" => "Label", "caption" => "_____________________________________________________________________________________________________");
             	$arrayElements[] = array("type" => "Label", "caption" => "Drei-Wege-Ventil-Aktor-ID (Boolean) für den Kurzschlußbetrieb");
             	$arrayElements[] = array("type" => "SelectVariable", "name" => "ThreeWayValve_ShortCircuitID", "caption" => "Aktor"); 
