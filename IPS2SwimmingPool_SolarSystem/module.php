@@ -205,6 +205,7 @@ class IPS2SwimmingPool_SolarSystem extends IPSModule
 			$this->SendDebug("SolarSystemControl", "Ausfuehrung", 0);
 			$PumpState = $this->GetValue("PumpState");
 			$PumpHysteresis = $this->ReadPropertyFloat("PumpHysteresis");
+			$ThreeWayValveHysteresis = $this->ReadPropertyFloat("ThreeWayValveHysteresis");
 			
 			$Temperature_CollectorArea = $this->GetValue($this->ReadPropertyInteger("Temperature_CollectorAreaID"));
 			$Temperature_Flow = $this->GetValue($this->ReadPropertyInteger("Temperature_FlowID"));
