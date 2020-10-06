@@ -228,8 +228,13 @@ class IPS2SwimmingPool_SolarSystem extends IPSModule
 			}
 			
 			// Drei-Wege-Ventil
-			If (($Temperature_ShortCircuit > $Temperature_Flow) AND ($PumpState == true)) {
-				
+			If (($Temperature_ShortCircuit > ($Temperature_Flow + $ThreeWayValveHysteresis)) AND ($PumpState == true)) {
+				RequestAction($this->ReadPropertyInteger("ThreeWayValve_ShortCircuitID"), false);
+				RequestAction($this->ReadPropertyInteger("ThreeWayValve_OpenID"), true);
+			}
+			elseif (($Temperature_ShortCircuit <= $Temperature_Flow) AND ($PumpState == true)) {
+				RequestAction($this->ReadPropertyInteger("ThreeWayValve_OpenID"), false);
+				RequestAction($this->ReadPropertyInteger("ThreeWayValve_ShortCircuitID"), true);
 			}
 		}
 	}
