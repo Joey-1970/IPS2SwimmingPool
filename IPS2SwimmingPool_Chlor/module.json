@@ -1,0 +1,14 @@
+{
+  "id": "{CCF692AA-C186-D9F6-E57A-DEB833C4696F}",
+  "name": "IPS2SwimmingPool_Chlor",
+  "type": 3,
+  "vendor": "JP-IPS-Modules",
+  "aliases":
+  [
+    "IPS2SwimmingPool_Chlor"
+  ],
+  "parentRequirements": [],
+  "childRequirements": [],
+  "implemented": [],
+  "prefix": "IPS2SwimmingPoolChlor"
+}
