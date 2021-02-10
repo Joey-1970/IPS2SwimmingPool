@@ -77,9 +77,22 @@ class IPS2SwimmingPool_Chlor extends IPSModule
     	}
 	
 	// Beginn der Funktionen
-	
-	
-	
+	public function CalculateRedox()
+	{
+		/*
+		https://verbraucherschutz.bio/aktuell/orp-wert-des-wassers/
+		Berechnung des Redox-Wertes
+		Der Redox-Wert lässt sich mit folgender Formel berechnen: rH = 2 x pH + (2 x eH) / 59,1
+		Legende:
+		rH = Redox-Wert
+		eH = Redox-Potential in mV (Millivolt)
+		pH = pH-Wert
+		https://de.wikipedia.org/wiki/Redoxpotential_(Bodenkunde)		
+		Die so neu bestimmten Werte laufen von rH 0 (reduktiv) bis rH 41 (oxidativ). Die Unterschreitung von 15 leitet Reduktionshorizonte ein. Bei rH > 30 herrscht nahezu vollständige Oxidation.
+		*/
+		
+		
+	}
 	
 	private function RegisterProfileInteger($Name, $Icon, $Prefix, $Suffix, $MinValue, $MaxValue, $StepSize)
 	{
