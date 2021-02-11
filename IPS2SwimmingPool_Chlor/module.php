@@ -12,10 +12,10 @@ class IPS2SwimmingPool_Chlor extends IPSModule
 		
 		
 		// Profile erstellen
-		
+		$this->RegisterProfileFloat("IPS2SwimmingPool.mV", "Electricity", "", " mV", -100000, +100000, 0.1, 3);
 		
 		//Status-Variablen anlegen		
-		
+		$this->RegisterVariableFloat("ORP", "ORP", "IPS2SwimmingPool.mV", 10);
 	
 	}
  	
@@ -85,7 +85,10 @@ class IPS2SwimmingPool_Chlor extends IPSModule
     	{
 		switch ($Message) {
 			case 10603:
-				// Änderung des Pumpen-Status
+				// Änderung des ORP-Wertes
+				If ($SenderID == $this->ReadPropertyInteger("ORP_SensorID")) {
+					$this->SetValue("ORP", $this->GetValue("ORP_SensorID"));
+				}
 				
 				break;
 		}
@@ -126,6 +129,24 @@ class IPS2SwimmingPool_Chlor extends IPSModule
 	        IPS_SetVariableProfileIcon($Name, $Icon);
 	        IPS_SetVariableProfileText($Name, $Prefix, $Suffix);
 	        IPS_SetVariableProfileValues($Name, $MinValue, $MaxValue, $StepSize);        
+	}
+	
+	private function RegisterProfileFloat($Name, $Icon, $Prefix, $Suffix, $MinValue, $MaxValue, $StepSize, $Digits)
+	{
+	        if (!IPS_VariableProfileExists($Name))
+	        {
+	            IPS_CreateVariableProfile($Name, 2);
+	        }
+	        else
+	        {
+	            $profile = IPS_GetVariableProfile($Name);
+	            if ($profile['ProfileType'] != 2)
+	                throw new Exception("Variable profile type does not match for profile " . $Name);
+	        }
+	        IPS_SetVariableProfileIcon($Name, $Icon);
+	        IPS_SetVariableProfileText($Name, $Prefix, $Suffix);
+	        IPS_SetVariableProfileValues($Name, $MinValue, $MaxValue, $StepSize);
+	        IPS_SetVariableProfileDigits($Name, $Digits);
 	}
 }
 ?>
