@@ -59,6 +59,8 @@ class IPS2SwimmingPool_Chlor extends IPSModule
 			   AND ($this->ReadPropertyInteger("pH_SensorID") > 9999)) 
 			{
 				// Startbedingungen erfüllt
+				$this->SetTimerInterval("Timer_1", ($this->ReadPropertyInteger("Timer_1") * 1000));
+
 				$this->SetValue("ORP", GetValueFloat($this->ReadPropertyInteger("ORP_SensorID")));
 				$this->SetValue("pH", GetValueFloat($this->ReadPropertyInteger("pH_SensorID")));
 				$this->SendDebug("ApplyChanges", "Startbedingungen erfuellt", 0);
@@ -70,6 +72,7 @@ class IPS2SwimmingPool_Chlor extends IPSModule
 			}
 			else {
 				Echo "Startbedingungen nicht erfuellt (fehlende Sensoren/Aktoren)!";
+				$this->SetTimerInterval("Timer_1", 0);
 				$this->SendDebug("ApplyChanges", "Startbedingungen nicht erfuellt!", 0);
 				$this->SetStatus(202);
 				$this->SetTimerInterval("SolarSystemControl", 0);
