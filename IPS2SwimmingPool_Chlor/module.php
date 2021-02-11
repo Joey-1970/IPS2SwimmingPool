@@ -9,6 +9,7 @@ class IPS2SwimmingPool_Chlor extends IPSModule
             	parent::Create();
 		$this->RegisterPropertyBoolean("Open", false);
 		$this->RegisterPropertyInteger("ORP_SensorID", 0); // ORP Sensor
+		$this->RegisterPropertyInteger("pH_SensorID", 0); // pH Sensor
 		
 		
 		// Profile erstellen
@@ -16,7 +17,8 @@ class IPS2SwimmingPool_Chlor extends IPSModule
 		
 		//Status-Variablen anlegen		
 		$this->RegisterVariableFloat("ORP", "ORP", "IPS2SwimmingPool.mV", 10);
-	
+		$this->RegisterVariableFloat("pH", "pH", "~Liquid.pH.F", 20);
+		$this->RegisterVariableFloat("rH", "rH", "", 30);
 	}
  	
 	public function GetConfigurationForm() 
@@ -49,10 +51,12 @@ class IPS2SwimmingPool_Chlor extends IPSModule
 		
 		
 		If ($this->ReadPropertyBoolean("Open") == true) {
-			If (($this->ReadPropertyInteger("ORP_SensorID") > 9999)) 
+			If (($this->ReadPropertyInteger("ORP_SensorID") > 9999)
+			   AND ($this->ReadPropertyInteger("pH_SensorID") > 9999)) 
 			{
 				// Startbedingungen erfüllt
 				$this->SetValue("ORP", GetValueFloat($this->ReadPropertyInteger("ORP_SensorID")));
+				$this->SetValue("pH", GetValueFloat($this->ReadPropertyInteger("pH_SensorID")));
 				$this->SendDebug("ApplyChanges", "Startbedingungen erfuellt", 0);
 				$this->SetStatus(102);
 				// Registrierung für Änderung an den Variablen
@@ -90,7 +94,9 @@ class IPS2SwimmingPool_Chlor extends IPSModule
 				If ($SenderID == $this->ReadPropertyInteger("ORP_SensorID")) {
 					$this->SetValue("ORP", GetValueFloat($this->ReadPropertyInteger("ORP_SensorID")));
 				}
-				
+				elseif ($SenderID == $this->ReadPropertyInteger("pH_SensorID")) {
+					$this->SetValue("pH", GetValueFloat($this->ReadPropertyInteger("pH_SensorID")));
+				}
 				break;
 		}
     	}
@@ -112,6 +118,11 @@ class IPS2SwimmingPool_Chlor extends IPSModule
 		If ($this->ReadPropertyBoolean("Open") == true) {
 			$this->SendDebug("CalculateRedox", "Ausfuehrung", 0);
 			$ORP = $this->GetValue("ORP");
+			$pH = $this->GetValue("pH");
+			
+			$rH = 2 * $pH + (2 * $ORP) / 59.1;
+			
+			$this->SetValue("rH", $rH);
 		}
 		
 	}
