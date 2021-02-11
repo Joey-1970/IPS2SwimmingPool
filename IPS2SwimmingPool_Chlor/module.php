@@ -33,7 +33,7 @@ class IPS2SwimmingPool_Chlor extends IPSModule
 		$arrayElements = array(); 		
 		$arrayElements[] = array("name" => "Open", "type" => "CheckBox",  "caption" => "Aktiv");
 		$arrayElements[] = array("type" => "Label", "caption" => "_____________________________________________________________________________________________________");
-		$arrayElements[] = array("type" => "NumberSpinner", "name" => "Timer_1", "caption" => "Wiederholungszyklus in Sekunden (0 -> aus, 1 sek -> Minimum)", "suffix" -> "Sekunden", "minimum" -> 0);
+		$arrayElements[] = array("type" => "NumberSpinner", "name" => "Timer_1", "caption" => "Wiederholungszyklus in Sekunden (0 -> aus, 1 sek -> Minimum)", "suffix" => "Sekunden", "minimum" => 0);
 		
 		$arrayElements[] = array("type" => "SelectVariable", "name" => "ORP_SensorID", "caption" => "ORP-Sensor-ID"); 
 		$arrayElements[] = array("type" => "SelectVariable", "name" => "pH_SensorID", "caption" => "pH-Sensor-ID"); 
