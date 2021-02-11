@@ -52,6 +52,7 @@ class IPS2SwimmingPool_Chlor extends IPSModule
 			If (($this->ReadPropertyInteger("ORP_SensorID") > 9999)) 
 			{
 				// Startbedingungen erfüllt
+				$this->SetValue("ORP", GetValueFloat($this->ReadPropertyInteger("ORP_SensorID")));
 				$this->SendDebug("ApplyChanges", "Startbedingungen erfuellt", 0);
 				$this->SetStatus(102);
 				// Registrierung für Änderung an den Variablen
@@ -87,7 +88,7 @@ class IPS2SwimmingPool_Chlor extends IPSModule
 			case 10603:
 				// Änderung des ORP-Wertes
 				If ($SenderID == $this->ReadPropertyInteger("ORP_SensorID")) {
-					$this->SetValue("ORP", $this->GetValue("ORP_SensorID"));
+					$this->SetValue("ORP", GetValueFloat($this->ReadPropertyInteger("ORP_SensorID")));
 				}
 				
 				break;
@@ -109,7 +110,8 @@ class IPS2SwimmingPool_Chlor extends IPSModule
 		Die so neu bestimmten Werte laufen von rH 0 (reduktiv) bis rH 41 (oxidativ). Die Unterschreitung von 15 leitet Reduktionshorizonte ein. Bei rH > 30 herrscht nahezu vollständige Oxidation.
 		*/
 		If ($this->ReadPropertyBoolean("Open") == true) {
-			
+			$this->SendDebug("CalculateRedox", "Ausfuehrung", 0);
+			$ORP = $this->GetValue("ORP");
 		}
 		
 	}
