@@ -10,7 +10,8 @@ class IPS2SwimmingPool_Chlor extends IPSModule
 		$this->RegisterPropertyBoolean("Open", false);
 		$this->RegisterPropertyInteger("ORP_SensorID", 0); // ORP Sensor
 		$this->RegisterPropertyInteger("pH_SensorID", 0); // pH Sensor
-		
+		$this->RegisterPropertyInteger("Timer_1", 60);
+		$this->RegisterTimer("Timer_1", 0, 'IPS2SwimmingPoolChlor_CalculateRedox($_IPS["TARGET"]);');
 		
 		// Profile erstellen
 		$this->RegisterProfileFloat("IPS2SwimmingPool.mV", "Electricity", "", " mV", -100000, +100000, 0.1, 3);
@@ -32,7 +33,10 @@ class IPS2SwimmingPool_Chlor extends IPSModule
 		$arrayElements = array(); 		
 		$arrayElements[] = array("name" => "Open", "type" => "CheckBox",  "caption" => "Aktiv");
 		$arrayElements[] = array("type" => "Label", "caption" => "_____________________________________________________________________________________________________");
-            	$arrayElements[] = array("type" => "SelectVariable", "name" => "ORP_SensorID", "caption" => "ORP-Sensor-ID"); 
+		$arrayElements[] = array("type" => "NumberSpinner", "name" => "Timer_1", "caption" => "Wiederholungszyklus in Sekunden (0 -> aus, 1 sek -> Minimum)", "suffix" -> "Sekunden", "minimum" -> 0);
+		
+		$arrayElements[] = array("type" => "SelectVariable", "name" => "ORP_SensorID", "caption" => "ORP-Sensor-ID"); 
+		$arrayElements[] = array("type" => "SelectVariable", "name" => "pH_SensorID", "caption" => "pH-Sensor-ID"); 
 		
  		$arrayActions = array(); 
 		$arrayActions[] = array("type" => "Label", "label" => "Test Center"); 
