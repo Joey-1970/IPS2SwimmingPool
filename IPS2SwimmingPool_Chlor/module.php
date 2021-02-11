@@ -8,7 +8,7 @@ class IPS2SwimmingPool_Chlor extends IPSModule
             	// Diese Zeile nicht löschen.
             	parent::Create();
 		$this->RegisterPropertyBoolean("Open", false);
-		
+		$this->RegisterPropertyInteger("ORP_SensorID", 0); // ORP Sensor
 		
 		
 		// Profile erstellen
@@ -30,7 +30,7 @@ class IPS2SwimmingPool_Chlor extends IPSModule
 		$arrayElements = array(); 		
 		$arrayElements[] = array("name" => "Open", "type" => "CheckBox",  "caption" => "Aktiv");
 		$arrayElements[] = array("type" => "Label", "caption" => "_____________________________________________________________________________________________________");
-            	
+            	$arrayElements[] = array("type" => "SelectVariable", "name" => "ORP_SensorID", "caption" => "ORP-Sensor-ID"); 
 		
  		$arrayActions = array(); 
 		$arrayActions[] = array("type" => "Label", "label" => "Test Center"); 
@@ -49,7 +49,22 @@ class IPS2SwimmingPool_Chlor extends IPSModule
 		
 		
 		If ($this->ReadPropertyBoolean("Open") == true) {
-			$this->SetStatus(102);		
+			If (($this->ReadPropertyInteger("ORP_SensorID") > 9999)) 
+			{
+				// Startbedingungen erfüllt
+				$this->SendDebug("ApplyChanges", "Startbedingungen erfuellt", 0);
+				$this->SetStatus(102);
+				// Registrierung für Änderung an den Variablen
+				$this->RegisterMessage($this->ReadPropertyInteger("ORP_SensorID"), 10603);
+				// Erste Daten berechnen
+				$this->CalculateRedox();
+			}
+			else {
+				Echo "Startbedingungen nicht erfuellt (fehlende Sensoren/Aktoren)!";
+				$this->SendDebug("ApplyChanges", "Startbedingungen nicht erfuellt!", 0);
+				$this->SetStatus(202);
+				$this->SetTimerInterval("SolarSystemControl", 0);
+			}		
 		}
 		else {
 			$this->SetStatus(104);
@@ -90,7 +105,9 @@ class IPS2SwimmingPool_Chlor extends IPSModule
 		https://de.wikipedia.org/wiki/Redoxpotential_(Bodenkunde)		
 		Die so neu bestimmten Werte laufen von rH 0 (reduktiv) bis rH 41 (oxidativ). Die Unterschreitung von 15 leitet Reduktionshorizonte ein. Bei rH > 30 herrscht nahezu vollständige Oxidation.
 		*/
-		
+		If ($this->ReadPropertyBoolean("Open") == true) {
+			
+		}
 		
 	}
 	
