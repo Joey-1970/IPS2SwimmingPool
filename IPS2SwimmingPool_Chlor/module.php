@@ -10,6 +10,7 @@ class IPS2SwimmingPool_Chlor extends IPSModule
 		$this->RegisterPropertyBoolean("Open", false);
 		$this->RegisterPropertyInteger("ORP_SensorID", 0); // ORP Sensor
 		$this->RegisterPropertyInteger("pH_SensorID", 0); // pH Sensor
+		$this->RegisterPropertyFloat("PoolVolume", 10);
 		$this->RegisterPropertyInteger("Timer_1", 60);
 		$this->RegisterTimer("Timer_1", 0, 'IPS2SwimmingPoolChlor_CalculateRedox($_IPS["TARGET"]);');
 		
@@ -38,7 +39,8 @@ class IPS2SwimmingPool_Chlor extends IPSModule
 		$arrayElements[] = array("type" => "SelectVariable", "name" => "ORP_SensorID", "caption" => "ORP-Sensor-ID"); 
 		$arrayElements[] = array("type" => "SelectVariable", "name" => "pH_SensorID", "caption" => "pH-Sensor-ID"); 
 		
- 		$arrayActions = array(); 
+		$arrayElements[] = array("type" => "NumberSpinner", "name" => "PoolVolume", "caption" => "Pool Volumen", "suffix" => "m3", "minimum" => 1, "digits" => 1);
+		$arrayActions = array(); 
 		$arrayActions[] = array("type" => "Label", "label" => "Test Center"); 
 		$arrayActions[] = array("type" => "TestCenter", "name" => "TestCenter");
 		
