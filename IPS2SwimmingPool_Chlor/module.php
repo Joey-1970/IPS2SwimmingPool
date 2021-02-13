@@ -53,6 +53,7 @@ class IPS2SwimmingPool_Chlor extends IPSModule
 		
 		$arrayElements[] = array("type" => "NumberSpinner", "name" => "PoolVolume", "caption" => "Pool Volumen", "suffix" => "m³", "minimum" => 1, "digits" => 1);
 		$arrayActions = array(); 
+		$arrayActions[] = array("type" => "Button", "caption" => "Vergangenheitswerte löschen", "onClick" => 'IPS2SwimmingPoolChlor_ResetDeviation($id);'); 
 		$arrayActions[] = array("type" => "Label", "label" => "Test Center"); 
 		$arrayActions[] = array("type" => "TestCenter", "name" => "TestCenter");
 		
@@ -194,6 +195,12 @@ class IPS2SwimmingPool_Chlor extends IPSModule
 		// Die Berechnung des neuen Regelwertes
 		$y = ($Kp * $e + $Ki * $Ta * $esum + $Kd * ($e - $ealt) / $Ta);
 	return $y;
+	}
+	
+	public function ResetDeviation()
+	{
+		$this->SetValue("SumDeviation", 0);
+		$this->SetValue("ActualDeviation", 0);
 	}
 	
 	private function RegisterProfileInteger($Name, $Icon, $Prefix, $Suffix, $MinValue, $MaxValue, $StepSize)
