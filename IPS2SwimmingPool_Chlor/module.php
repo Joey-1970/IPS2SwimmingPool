@@ -65,7 +65,8 @@ class IPS2SwimmingPool_Chlor extends IPSModule
             	// Diese Zeile nicht löschen
             	parent::ApplyChanges();
 		
-		
+		// Zeitstempel für die Differenz der Messungen
+		$this->SetBuffer("LastTrigger", time() - 60);
 		
 		
 		If ($this->ReadPropertyBoolean("Open") == true) {
