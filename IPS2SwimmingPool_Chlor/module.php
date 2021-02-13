@@ -74,7 +74,7 @@ class IPS2SwimmingPool_Chlor extends IPSModule
 			   AND ($this->ReadPropertyInteger("pH_SensorID") > 9999)) 
 			{
 				// Startbedingungen erfüllt
-				$this->SetTimerInterval("Timer_1", ($this->ReadPropertyInteger("Timer_1") * 1000));
+				$this->SetTimerInterval("Timer_1", ($this->ReadPropertyInteger("Timer_1") * 1000 * 60));
 
 				$this->SetValue("ORP", GetValueFloat($this->ReadPropertyInteger("ORP_SensorID")));
 				$this->SetValue("pH", GetValueFloat($this->ReadPropertyInteger("pH_SensorID")));
