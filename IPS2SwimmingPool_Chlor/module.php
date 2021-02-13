@@ -162,7 +162,7 @@ class IPS2SwimmingPool_Chlor extends IPSModule
 		$ealt = $this->GetValue("ActualDeviation"); 
 		
 		//Aktuelle Regelabweichung bestimmen
-		$e = $this->GetValue("ORP_Target") - $this->GetValue("ORP");
+		$e = $this->ReadPropertyInteger("ORP_Target") - $this->GetValue("ORP");
 		
 		// Vorherige Regelabweichung durch jetzige ersetzen 
 		$this->SetValue("ActualDeviation", $e);
