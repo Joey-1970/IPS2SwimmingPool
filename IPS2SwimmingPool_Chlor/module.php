@@ -15,7 +15,7 @@ class IPS2SwimmingPool_Chlor extends IPSModule
 		$this->RegisterPropertyFloat("KP", 0.0);
 		$this->RegisterPropertyFloat("KD", 0.0);
 		$this->RegisterPropertyFloat("KI", 0.0);
-		$this->RegisterPropertyInteger("Timer_1", 60);
+		$this->RegisterPropertyInteger("Timer_1", 5);
 		$this->RegisterTimer("Timer_1", 0, 'IPS2SwimmingPoolChlor_CalculateRedox($_IPS["TARGET"]);');
 		
 		// Profile erstellen
@@ -41,7 +41,7 @@ class IPS2SwimmingPool_Chlor extends IPSModule
 		$arrayElements = array(); 		
 		$arrayElements[] = array("name" => "Open", "type" => "CheckBox",  "caption" => "Aktiv");
 		$arrayElements[] = array("type" => "Label", "caption" => "_____________________________________________________________________________________________________");
-		$arrayElements[] = array("type" => "NumberSpinner", "name" => "Timer_1", "caption" => "Wiederholungszyklus in Sekunden (0 -> aus, 1 sek -> Minimum)", "suffix" => "Sekunden", "minimum" => 0);
+		$arrayElements[] = array("type" => "NumberSpinner", "name" => "Timer_1", "caption" => "Wiederholungszyklus in Minuten (5 Min Minimum)", "suffix" => "Minuten", "minimum" => 5);
 		$arrayElements[] = array("type" => "Label", "caption" => "_____________________________________________________________________________________________________");
 		$arrayElements[] = array("type" => "NumberSpinner", "name" => "ORP_Target", "caption" => "Ziel-Redox-Wert", "suffix" => "mV", "minimum" => 0);
 		$arrayElements[] = array("type" => "NumberSpinner", "name" => "KP", "caption" => "Verstärkungsfaktor Proportionalregler", "digits" => 1);
