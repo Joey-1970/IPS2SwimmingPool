@@ -34,7 +34,7 @@ class IPS2SwimmingPool_Chlor extends IPSModule
 		$arrayElements[] = array("type" => "Label", "caption" => "_____________________________________________________________________________________________________");
 		$arrayElements[] = array("type" => "NumberSpinner", "name" => "Timer_1", "caption" => "Wiederholungszyklus in Minuten (30 Min Minimum)", "suffix" => "Minuten", "minimum" => 30);
 		$arrayElements[] = array("type" => "Label", "caption" => "_____________________________________________________________________________________________________");
-		$arrayElements[] = array("type" => "NumberSpinner", "name" => "ORP_Target", "caption" => "Ziel-pH-Wert", "suffix" => "pH", "minimum" => 720, "maximum" => 780 );
+		$arrayElements[] = array("type" => "NumberSpinner", "name" => "ORP_Target", "caption" => "Ziel-mV-Wert", "suffix" => "mV", "minimum" => 720, "maximum" => 780 );
 		$arrayElements[] = array("type" => "NumberSpinner", "name" => "MilliLiter", "caption" => "Milliliter pro Defizit/mV", "suffix" => "ml", "minimum" => 0, "maximum" => 100);
 		$arrayElements[] = array("type" => "Label", "caption" => "_____________________________________________________________________________________________________"); 
 		$arrayElements[] = array("type" => "SelectVariable", "name" => "ORP_SensorID", "caption" => "ORP-Sensor-ID"); 
